@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metric Gym — Practice 2: Build the Bigger Picture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --text-secondary: #555555;
+      --text-muted: #888888;
+      --border: #e5e5e5;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mg-card {
+      background: var(--surface);
+      max-width: 720px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 48px 32px;
+      box-shadow: var(--shadow);
+    }
+
+    @media (min-width: 768px) {
+      html,
+      body {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+      }
+
+      body {
+        padding: 12px 0;
+      }
+
+      .mg-card {
+        margin: 0 auto;
+        min-height: auto;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        padding: 40px 48px;
+      }
+    }
+
+    .mg-header { text-align: center; margin-bottom: 40px; }
+
+    .mg-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .mg-subtitle {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .mg-divider {
+      width: 48px;
+      height: 3px;
+      background: var(--accent);
+      margin: 0 auto 24px;
+      border-radius: 2px;
+    }
+
+    .mg-intro p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .mg-highlight {
+      background: var(--accent-light);
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      margin: 24px 0;
+      border-radius: 0 8px 8px 0;
+      text-align: center;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .mg-practice-title {
+      margin: 34px 0 14px;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.35;
+      text-align: center;
+      color: var(--text);
+    }
+
+    .mg-question-prompts {
+      width: fit-content;
+      margin: 0 auto 16px;
+    }
+
+    .mg-ask {
+      margin-bottom: 4px !important;
+      padding-left: 22px;
+      text-align: left !important;
+    }
+
+    .mg-landing-list {
+      margin: 0;
+      padding-left: 22px;
+      color: var(--text-secondary);
+      font-size: 15px;
+      text-align: left;
+      line-height: 1.55;
+    }
+
+    .mg-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 32px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      text-decoration: none;
+    }
+
+    .mg-btn-primary {
+      background: var(--text);
+      color: #fff;
+    }
+    .mg-btn-primary:hover { background: #333; transform: translateY(-1px); }
+
+    .mg-btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .mg-btn-outline:hover { border-color: var(--text); }
+
+    .mg-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .mg-btn-primary:disabled:hover {
+      background: var(--text);
+      transform: none;
+    }
+
+    .mg-center { text-align: center; }
+    .mg-mt-2 { margin-top: 32px; }
+
+    .mg-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mg-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .mg-progress-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .mg-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .mg-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .mg-tag-finance { background: #dbeafe; color: #1e40af; }
+    .mg-tag-marketing { background: #fce7f3; color: #9d174d; }
+    .mg-tag-sales { background: #d1fae5; color: #065f46; }
+    .mg-tag-operations { background: #fef3c7; color: #92400e; }
+    .mg-tag-customer-success { background: #e0e7ff; color: #3730a3; }
+    .mg-tag-cross-functional { background: #ede9fe; color: #5b21b6; }
+
+    .mg-scenario-title {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .mg-scenario-body {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+      line-height: 1.65;
+    }
+
+    .mg-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .mg-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      width: 100%;
+    }
+
+    .mg-option:hover {
+      border-color: var(--text-muted);
+      background: #fafafa;
+    }
+
+    .mg-option-letter {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+
+    .mg-option-text { line-height: 1.5; padding-top: 3px; }
+
+    .mg-option.correct {
+      border-color: var(--success);
+      background: var(--success-light);
+    }
+    .mg-option.correct .mg-option-letter {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    .mg-option.wrong {
+      border-color: var(--danger);
+      background: var(--danger-light);
+      opacity: 0.7;
+    }
+    .mg-option.wrong .mg-option-letter {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+    }
+
+    .mg-option.disabled {
+      cursor: default;
+      pointer-events: none;
+    }
+    .mg-option:not(.correct):not(.wrong).disabled { opacity: 0.5; }
+
+    .mg-feedback {
+      padding: 20px 22px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      font-size: 15px;
+      line-height: 1.65;
+      border-left: 3px solid;
+    }
+
+    .mg-feedback.correct {
+      background: var(--success-light);
+      border-color: var(--success);
+      color: #14532d;
+    }
+
+    .mg-feedback.wrong {
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: #7f1d1d;
+    }
+
+    .mg-pattern {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .mg-pattern-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .mg-hidden { display: none !important; }
+
+    .mg-finish h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .mg-finish p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .mg-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .mg-what-practise {
+      margin: 28px 0;
+      text-align: left;
+    }
+    .mg-what-practise h3 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .mg-what-practise ul {
+      list-style: none;
+      padding: 0;
+    }
+    .mg-what-practise li {
+      padding: 6px 0;
+      font-size: 15px;
+      color: var(--text-secondary);
+      padding-left: 20px;
+      position: relative;
+    }
+    .mg-what-practise li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Compact desktop layout: sized to fit a standard laptop viewport. */
+    @media (min-width: 768px) {
+      .mg-card {
+        width: calc(100% - 24px);
+        max-width: 960px;
+        height: calc(100vh - 24px);
+        height: calc(100dvh - 24px);
+        padding: 22px 34px;
+      }
+
+      #landing:not(.mg-hidden) {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+      }
+
+      #landing .mg-header,
+      #landing .mg-intro {
+        width: 100%;
+      }
+
+      #scenario:not(.mg-hidden) {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #scenario .mg-tag {
+        align-self: flex-start;
+      }
+
+      #scenario .mg-nav {
+        margin-top: auto !important;
+        padding-top: 8px;
+        flex-shrink: 0;
+      }
+
+      .mg-header {
+        margin-bottom: 20px;
+      }
+
+      .mg-header h1 {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+
+      .mg-subtitle {
+        font-size: 12px;
+        margin-bottom: 12px;
+      }
+
+      .mg-divider {
+        margin-bottom: 14px;
+      }
+
+      .mg-intro p {
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      .mg-highlight {
+        padding: 11px 16px;
+        margin: 14px 0;
+        font-size: 14px;
+      }
+
+      .mg-practice-title {
+        margin: 18px 0 8px;
+        font-size: 18px;
+      }
+
+      .mg-landing-list {
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .mg-question-prompts {
+        margin-bottom: 8px;
+      }
+
+      .mg-btn {
+        padding: 10px 24px;
+        font-size: 14px;
+      }
+
+      .mg-mt-2 {
+        margin-top: 16px;
+      }
+
+      .mg-progress {
+        margin-bottom: 16px;
+        font-size: 12px;
+      }
+
+      .mg-tag {
+        margin-bottom: 8px;
+      }
+
+      .mg-scenario-title {
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+
+      .mg-scenario-body {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 14px;
+      }
+
+      .mg-options {
+        gap: 7px;
+        margin-bottom: 12px;
+      }
+
+      .mg-option {
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+
+      .mg-option-letter {
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
+      }
+
+      .mg-feedback {
+        padding: 14px 17px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .mg-pattern {
+        margin-top: 8px;
+        font-size: 11px;
+      }
+
+      .mg-meta {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="mg-card">
+  <!-- LANDING -->
+  <div id="landing">
+    <div class="mg-header">
+      <div class="mg-subtitle">The Bigger Picture</div>
+      <h1>Welcome to the Metric Gym</h1>
+      <div class="mg-divider"></div>
+    </div>
+
+    <div class="mg-intro">
+      <p>For each situation, look for the connection between different parts of the business.</p>
+      <div class="mg-highlight">
+        Each exercise gives you a business situation and asks which metric you would check first—or what you should investigate next.
+      </div>
+      <p>This is practice, not a test. The aim is to build the habit of seeing beyond one number.</p>
+
+      <h2 class="mg-practice-title">Practice 2: Build the Bigger Picture</h2>
+      <p>You have now completed Chapter 10 and can understand the connection between different parts of the business.</p>
+      <div class="mg-question-prompts">
+        <p class="mg-ask"><strong>Ask yourself:</strong></p>
+        <ul class="mg-landing-list">
+          <li>What is visible?</li>
+          <li>What is still missing?</li>
+          <li>Which numbers need to be read together?</li>
+          <li>What should be investigated before anyone acts?</li>
+        </ul>
+      </div>
+
+      <p class="mg-meta" style="text-align:center; margin-top:24px;">
+        15 situations &nbsp;·&nbsp; 10–15 minutes
+      </p>
+
+      <div class="mg-center mg-mt-2">
+        <button class="mg-btn mg-btn-primary" onclick="startPractice()">Start Practice 2</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO -->
+  <div id="scenario" class="mg-hidden">
+    <div class="mg-progress">
+      <span>Situation <span id="current-num">1</span> of <span id="total-num">15</span></span>
+      <div class="mg-progress-bar"><div class="mg-progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="tag" class="mg-tag"></div>
+    <h2 class="mg-scenario-title" id="scenario-title"></h2>
+    <p class="mg-scenario-body" id="scenario-body"></p>
+
+    <div class="mg-options" id="options"></div>
+
+    <div id="feedback" class="mg-feedback mg-hidden"></div>
+
+    <div class="mg-nav" id="next-container" style="margin-top:8px;">
+      <button class="mg-btn mg-btn-outline" id="back-btn" onclick="previousScenario()">Back</button>
+      <button class="mg-btn mg-btn-primary" id="next-btn" onclick="nextScenario()">Next Situation</button>
+    </div>
+  </div>
+
+  <!-- FINISH -->
+  <div id="finish" class="mg-hidden mg-center">
+    <div class="mg-header">
+      <div class="mg-subtitle">Practice 2 Complete</div>
+      <h1>You have finished the advanced set</h1>
+      <div class="mg-divider"></div>
+    </div>
+    <p>You practised connecting measures across Finance, Marketing, Sales, Operations, Customer Success, and cross-functional situations.</p>
+    <p style="margin-top:12px;">Keep using this method: connect the warning lights, check the relationships, and investigate before deciding what to change.</p>
+    <div class="mg-mt-2">
+      <button class="mg-btn mg-btn-outline" onclick="restartPractice()">Start Over</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const scenarios = [
+  {
+    "id": "F3",
+    "tag": "Finance",
+    "tagClass": "mg-tag-finance",
+    "title": "Your balance sheet shows huge assets. Your expenses are massive. Your COGS is 80% of revenue.",
+    "body": "You look at your numbers and see: you own a lot of equipment or inventory, your monthly bills are enormous, and 80 cents of every dollar goes straight to making the product.",
+    "options": [
+      "You are likely a software or content business",
+      "You are likely a product, manufacturing, or retail business",
+      "You are likely a freelance service business",
+      "You are likely a subscription business"
+    ],
+    "correct": 1,
+    "correctText": "Yes. High COGS (Cost of Goods Sold) + large assets (inventory, equipment, warehouse) = you make or move physical things. A software business has tiny COGS and few physical assets. A freelancer has low COGS but no inventory. Your numbers describe a product business.",
+    "wrongText": "Think again. Software and content businesses have almost zero COGS and very few physical assets. Freelancers have low COGS but no inventory. A product, manufacturing, or retail business needs inventory, equipment, and materials — which means high COGS and large assets.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "F5",
+    "tag": "Finance",
+    "tagClass": "mg-tag-finance",
+    "title": "You landed a $50,000 corporate client. But they pay in 90 days. Your supplier wants payment in 15 days.",
+    "body": "The deal looks huge on paper. But you need to buy materials now and wait three months to get paid.",
+    "options": [
+      "Check your net profit margin on the deal",
+      "Check your cash flow gap and working capital needs",
+      "Check your customer acquisition cost for this client",
+      "Check your employee utilization rate"
+    ],
+    "correct": 1,
+    "correctText": "Right. Big revenue with long payment terms can put a small business under severe cash pressure. You need cash to pay suppliers today. Start by checking cash flow timing (when cash goes out vs. when it comes in). If you cannot bridge the gap, the deal could create a serious cash shortage.",
+    "wrongText": "Net profit margin looks good on paper but ignores timing. CAC is less directly connected — you already have the client. Utilization rate does not matter if you cannot afford to start the work. The danger is the cash gap.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "F6",
+    "tag": "Finance",
+    "tagClass": "mg-tag-finance",
+    "title": "Your monthly recurring revenue is $10,000. But your bank balance dropped $4,000 last month.",
+    "body": "Subscribers are paying. But your costs to serve them, acquire them, and keep the platform running are eating the subscription money.",
+    "options": [
+      "Check your churn rate",
+      "Check your net cash flow and cost per subscriber",
+      "Check your organic vs. paid ratio",
+      "Check your delivery time"
+    ],
+    "correct": 1,
+    "correctText": "Right. MRR is vanity if costs exceed it. Start by checking net cash flow per subscriber. You need to know if each subscriber is profitable after all costs, not just if they are paying.",
+    "wrongText": "Churn matters but does not explain why your bank dropped despite recurring revenue. Organic ratio and delivery time are downstream. The leak is in costs exceeding inflows.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "F7",
+    "tag": "Finance",
+    "tagClass": "mg-tag-finance",
+    "title": "Your accountant says you made $50,000 profit this year. Your bank account has $2,000 in it.",
+    "body": "You filed your taxes feeling proud. Then you looked at your balance and realized you cannot cover next month's rent.",
+    "options": [
+      "Check how much tax you paid during the year",
+      "Trace whether cash went into invoices, stock, equipment, debt, or withdrawals",
+      "Check whether advertising costs increased during the year",
+      "Compare payroll with the previous financial year"
+    ],
+    "correct": 1,
+    "correctText": "Right. Profit and cash are not the same. Customers may still owe you money, or cash may have been used for stock, equipment, loan repayments, taxes, or owner withdrawals. Trace where the cash went before deciding what needs to change.",
+    "wrongText": "Those costs may matter, but none explains the gap on its own. Start by reconciling profit with cash: check unpaid invoices, stock purchases, equipment, debt repayments, taxes, and owner withdrawals.",
+    "pattern": "So What?"
+  },
+  {
+    "id": "F8",
+    "tag": "Finance",
+    "tagClass": "mg-tag-finance",
+    "title": "You have not paid yourself a salary in three months to \"keep the business alive.\" Revenue is $15,000 a month.",
+    "body": "The business looks healthy from the outside. But you are personally borrowing money to cover your rent. You tell yourself this is temporary.",
+    "options": [
+      "Check your revenue growth rate",
+      "Check your true burn rate including owner salary and personal loans",
+      "Check your customer acquisition cost",
+      "Check your website traffic"
+    ],
+    "correct": 1,
+    "correctText": "Right. If the business cannot cover a reasonable amount for the owner’s essential living costs over time, it may not yet be financially sustainable. Include that amount when checking whether the business can support the person running it.",
+    "wrongText": "Growth, marketing cost, and traffic may matter, but they do not answer whether the business can support its owner. Include a reasonable owner amount in the cash-flow check and investigate what would make it sustainable.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "F9",
+    "tag": "Finance",
+    "tagClass": "mg-tag-finance",
+    "title": "You make 80% of your annual revenue in December. It is March and you are bleeding cash.",
+    "body": "Holiday sales were huge. You did not save enough. Now it is the slow season and you cannot pay suppliers.",
+    "options": [
+      "Check your year-round marketing",
+      "Check your seasonal cash reserve and off-season burn rate",
+      "Check your product mix",
+      "Check your employee productivity during slow months"
+    ],
+    "correct": 1,
+    "correctText": "Right. Seasonal businesses die in the off-season. Start by checking seasonal cash reserve (what percentage of peak revenue you bank for the slow months) and off-season runway. You need 6–9 months of expenses saved from peak season.",
+    "wrongText": "Marketing and product mix are long-term fixes. Productivity does not solve a cash shortage. The immediate problem is you spent December's money in January. Start by checking how many months you can survive on savings during the off-season.",
+    "pattern": "Trend Tracker"
+  },
+  {
+    "id": "F10",
+    "tag": "Finance",
+    "tagClass": "mg-tag-finance",
+    "title": "You took a $30,000 loan to cover cash flow. Now loan payments are 40% of your monthly revenue.",
+    "body": "The loan solved last quarter's crisis. But now every month, two-fifths of your income disappears before you pay anyone else.",
+    "options": [
+      "Compare revenue with the number of employees",
+      "Check how much cash remains after operating costs and loan payments",
+      "Compare marketing spending with new sales",
+      "Check how quickly stock is being sold"
+    ],
+    "correct": 1,
+    "correctText": "Right. The question is not simply how large the payment looks beside revenue. Check whether the business produces enough cash after normal operating costs to make its loan payments safely. If little or nothing remains, investigate refinancing or restructuring before another payment is missed.",
+    "wrongText": "Those numbers may help elsewhere, but the immediate question is whether normal operations leave enough cash to service the loan. Check cash remaining after operating costs and debt payments, then investigate the available options.",
+    "pattern": "So What? + Ratio Builder"
+  },
+  {
+    "id": "F11",
+    "tag": "Finance",
+    "tagClass": "mg-tag-finance",
+    "title": "Your monthly expenses grew from $3,000 to $5,500 over six months. Revenue stayed flat at $6,000.",
+    "body": "You did not hire anyone. You did not move offices. But small subscriptions, tools, and \"necessary\" expenses crept in.",
+    "options": [
+      "Check your customer churn rate",
+      "Check your expense-by-category breakdown and operating expense ratio",
+      "Check your delivery time",
+      "Check your conversion rate"
+    ],
+    "correct": 1,
+    "correctText": "Right. When revenue is flat but expenses rise, the leak is in overhead. Start by checking OpEx ratio (operating expenses ÷ revenue). Track it monthly. Cut the biggest category first.",
+    "wrongText": "Churn, delivery time, and conversion rate do not explain why expenses rose. Start by investigating not revenue — it is cost creep. Start by checking operating expense ratio by category.",
+    "pattern": "Trend Tracker"
+  },
+  {
+    "id": "M3",
+    "tag": "Marketing",
+    "tagClass": "mg-tag-marketing",
+    "title": "For two years, 70% of your customers found you through word of mouth. This quarter, it dropped to 20%.",
+    "body": "You never paid for marketing before. Now you are running ads just to survive.",
+    "options": [
+      "Spend more on ads to replace the lost organic traffic",
+      "Check your referral rate, NPS, and customer satisfaction trend",
+      "Check your website SEO ranking",
+      "Hire a social media manager immediately"
+    ],
+    "correct": 1,
+    "correctText": "Right. A large fall in referrals is a warning to investigate. Check the actual number of referred customers, not only their percentage, and ask what changed in the customer experience, competition, or referral process before replacing referrals with paid traffic.",
+    "wrongText": "Advertising or search visibility may matter later, but first confirm whether the number of referrals actually fell and investigate what changed. A lower percentage alone can also happen when other channels grow.",
+    "pattern": "Trend Tracker"
+  },
+  {
+    "id": "M4",
+    "tag": "Marketing",
+    "tagClass": "mg-tag-marketing",
+    "title": "You spend 15 hours a week on \"free\" social media marketing. You get 5 customers a month from it.",
+    "body": "You are proud that you do not pay for ads. But you are working evenings to create content.",
+    "options": [
+      "Compare the number of posts with follower growth",
+      "Calculate the time cost per customer and compare it with other channels",
+      "Compare content hours with total website visits",
+      "Calculate the advertising cost of gaining five customers"
+    ],
+    "correct": 1,
+    "correctText": "Right. Fifteen hours a week is about 60 hours a month. If your time is worth $50 an hour, that represents about $3,000 of time, or $600 for each of five customers. Compare that cost with the gross profit those customers generate and with other marketing channels.",
+    "wrongText": "Followers and visits may show attention, but the business needs to know what those five customers cost. Include the value of the time spent creating content, then compare the result with the gross profit and with other channels.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "M6",
+    "tag": "Marketing",
+    "tagClass": "mg-tag-marketing",
+    "title": "A customer says \"I saw you on Instagram\" but they actually Googled your brand name after a friend told them about you.",
+    "body": "Your analytics gives Instagram the credit. But the real driver was the friend's recommendation.",
+    "options": [
+      "Trust the analytics",
+      "Ask every customer \"How did you first hear about us?\" and track true lead source",
+      "Stop tracking sources",
+      "Double your Instagram budget since it is \"working\""
+    ],
+    "correct": 1,
+    "correctText": "Right. Analytics may show the final recorded step, while the customer can reveal an earlier influence such as a friend. Use both the tracked path and the customer’s answer to build a more complete picture of how people find you.",
+    "wrongText": "One source rarely tells the whole story. Analytics shows recorded interactions; customers can describe earlier influences. Compare both before changing the budget.",
+    "pattern": "So What?"
+  },
+  {
+    "id": "M7",
+    "tag": "Marketing",
+    "tagClass": "mg-tag-marketing",
+    "title": "You paid an influencer $2,000. They got 100,000 views. Zero sales.",
+    "body": "The influencer sent you a screenshot of their analytics. The engagement looked incredible. Your bank account looks the same.",
+    "options": [
+      "Hire a bigger influencer",
+      "Calculate your cost per acquisition and compare to other channels",
+      "Ask the influencer to post again",
+      "Check your website speed"
+    ],
+    "correct": 1,
+    "correctText": "Right. The campaign spent $2,000 and produced no tracked sales, so it did not acquire a customer in this test. Check the offer, audience, tracking, and buying path before deciding whether to repeat the campaign or reject the channel.",
+    "wrongText": "A bigger audience or another post may repeat the same result, while website speed is only one possible factor. Start with the outcome—$2,000 spent and no tracked customers—then investigate the audience, offer, tracking, and buying path.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "M8",
+    "tag": "Marketing",
+    "tagClass": "mg-tag-marketing",
+    "title": "You have 5,000 email subscribers. Only 50 open your emails.",
+    "body": "You built this list over two years. You send newsletters weekly. But 99% of your list ignores you.",
+    "options": [
+      "Send more emails",
+      "Check your open rate trend and clean your list of inactive subscribers",
+      "Buy ads to get more subscribers",
+      "Check your subject lines"
+    ],
+    "correct": 1,
+    "correctText": "Right. Fifty reported opens from 5,000 subscribers is a warning sign, but opens alone are imperfect. Check delivery, clicks, purchases, and the trend over time before deciding whether to re-engage or remove inactive subscribers.",
+    "wrongText": "Frequency, list growth, and subject lines may affect results, but none completes the picture alone. Check delivery, clicks, purchases, and open-rate trends before changing the list.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "M9",
+    "tag": "Marketing",
+    "tagClass": "mg-tag-marketing",
+    "title": "80% of your ad budget goes to retargeting people who already visited your site.",
+    "body": "Your ads follow people around the internet. You get clicks. But you are spending almost nothing to find new people.",
+    "options": [
+      "Keep retargeting",
+      "Check your new customer ratio and prospecting vs. retargeting split",
+      "Increase retargeting to 100%",
+      "Check your organic traffic"
+    ],
+    "correct": 1,
+    "correctText": "Right. Retargeting can be efficient, but its audience is limited to people already reached. Check how many first-time customers prospecting and retargeting each produce, and whether the pool of new potential customers is growing or shrinking.",
+    "wrongText": "Retargeting or organic traffic may be valuable, but the 80% budget share is not automatically good or bad. Compare first-time customers and acquisition cost from each campaign before changing the split.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "M10",
+    "tag": "Marketing",
+    "tagClass": "mg-tag-marketing",
+    "title": "You post daily on social media. Engagement is high. But no one buys.",
+    "body": "Your posts get hundreds of likes. People comment. You feel visible. But your sales have not moved in six months.",
+    "options": [
+      "Post more often",
+      "Track your social-to-sale conversion rate and time cost per lead",
+      "Hire a social media manager to improve quality",
+      "Check your follower demographics"
+    ],
+    "correct": 1,
+    "correctText": "Right. Likes are not leads. Start by checking social-to-sale conversion (customers from social ÷ total social engagement) and time cost per lead. If you spend 20 hours a week for zero sales, the channel is consuming time without producing tracked sales.",
+    "wrongText": "Posting more of what does not sell will not fix it. Hiring help just adds cost. Demographics might matter, but the core issue is: engagement does not equal commerce. Track conversion to sales.",
+    "pattern": "So What? + Ratio Builder"
+  },
+  {
+    "id": "M11",
+    "tag": "Marketing",
+    "tagClass": "mg-tag-marketing",
+    "title": "Your ads target \"everyone in the country.\" Most of your sales are local.",
+    "body": "You are paying to show ads to people 2,000 miles away who will never visit your shop. Your cost per lead is sky-high.",
+    "options": [
+      "Keep national targeting",
+      "Check your geographic conversion rate and narrow your targeting radius",
+      "Open an online store to serve the national audience",
+      "Increase your ad budget to improve national reach"
+    ],
+    "correct": 1,
+    "correctText": "Right. Geographic waste is invisible until you look. Start by checking conversion rate by geography (local vs. distant). If 90% of buyers are within 10 miles, stop paying for the other 90% of the country.",
+    "wrongText": "National brand awareness is expensive for a local business. Opening an online store is a major strategic shift, not a targeting fix. Increasing budget just increases waste. Narrow the radius and watch CPL drop.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "S3",
+    "tag": "Sales",
+    "tagClass": "mg-tag-sales",
+    "title": "Your CRM shows 30 deals \"in progress.\" But none have moved in 60 days.",
+    "body": "The pipeline looks healthy. But the deals are stalled. You keep them open because \"they might close.\"",
+    "options": [
+      "Keep them open",
+      "Check your sales cycle length and set a stale-deal cutoff",
+      "Hire a closer",
+      "Check your cost per lead"
+    ],
+    "correct": 1,
+    "correctText": "Right. Deals with no movement can make the pipeline look healthier than it is. Compare each deal with your normal sales cycle and set a clear rule for when an opportunity becomes stale and needs a decision or a later follow-up date.",
+    "wrongText": "Hiring or examining lead cost does not first resolve whether these deals are genuinely active. Compare them with your normal sales cycle and check whether each has a real next step.",
+    "pattern": "Trend Tracker"
+  },
+  {
+    "id": "S4",
+    "tag": "Sales",
+    "tagClass": "mg-tag-sales",
+    "title": "You give free consultations to everyone who asks. 80% of leads get a demo. 5% buy.",
+    "body": "You are spending hours every week on calls that go nowhere. But saying no feels like losing a sale.",
+    "options": [
+      "Give more demos",
+      "Check your qualification rate and revenue per sales hour",
+      "Lower your demo quality",
+      "Check your website traffic"
+    ],
+    "correct": 1,
+    "correctText": "Right. Time spent on unqualified leads is time stolen from real customers. Start by checking revenue per sales hour. If demos eat 20 hours for 1 sale, your time is being wasted. Qualify before you demo.",
+    "wrongText": "Giving more demos with a 5% close rate is unlikely to improve the result on its own. Lowering quality hurts your brand. Website traffic is less directly connected. Start by investigating not how many demos you give; it is who you give them to.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "S5",
+    "tag": "Sales",
+    "tagClass": "mg-tag-sales",
+    "title": "You sell on your website, at markets, and through WhatsApp. You know total sales. You do not know which channel is actually profitable.",
+    "body": "Markets feel busy. WhatsApp feels personal. The website feels automatic. But which one pays the bills?",
+    "options": [
+      "Keep all three",
+      "Track sales by channel and calculate revenue per channel hour",
+      "Close the website",
+      "Check your marketing spend per channel"
+    ],
+    "correct": 1,
+    "correctText": "Right. Not all sales channels are equal. Start by checking revenue per channel hour (revenue ÷ time spent managing that channel). If WhatsApp takes 10 hours for $500 and the website takes 1 hour for $500, the math is clear.",
+    "wrongText": "Diversification is good only if all channels earn their keep. Closing the website is emotional, not analytical. Marketing spend per channel does not capture your time. Start by checking revenue per hour by channel.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "S7",
+    "tag": "Sales",
+    "tagClass": "mg-tag-sales",
+    "title": "You only close deals when you offer 30% off. Full-price conversion is near zero.",
+    "body": "Your customers have been trained to wait for the discount. Your margin is disappearing. But without the discount, no one buys.",
+    "options": [
+      "Keep discounting",
+      "Check your full-price conversion rate and discount dependency ratio",
+      "Raise prices and stop discounting immediately",
+      "Check your cost per lead"
+    ],
+    "correct": 1,
+    "correctText": "Right. Discount dependency ratio (discounted sales ÷ total sales) tells you if your business is real or just a fire sale. If most sales require a discount, customers may have learned to wait for one. Start by checking full-price conversion rate trend.",
+    "wrongText": "Higher volume only helps when it produces enough additional gross profit. Raising prices cold turkey may reduce sales sharply if you have not fixed the value proposition. Cost per lead does not explain why people only buy on sale. Start by investigating price integrity.",
+    "pattern": "Trend Tracker"
+  },
+  {
+    "id": "S8",
+    "tag": "Sales",
+    "tagClass": "mg-tag-sales",
+    "title": "You get 20 inquiries a week. You respond to 5. You wonder why sales are low.",
+    "body": "You are busy with delivery. Inquiries pile up in your inbox. You tell yourself you will get to them.",
+    "options": [
+      "Hire a salesperson",
+      "Check your response rate and speed-to-lead conversion",
+      "Check your marketing channels",
+      "Raise your prices"
+    ],
+    "correct": 1,
+    "correctText": "Right. Only five of 20 enquiries receive a response, so the response rate is 25%. Track response rate, average response time, and conversion by response-time range. This will show whether unanswered or delayed enquiries are contributing to low sales.",
+    "wrongText": "Hiring, lead quality, or pricing may eventually matter. First investigate the visible gap: 15 of 20 enquiries receive no response. Track the response rate and time to first response before choosing a larger change.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "S9",
+    "tag": "Sales",
+    "tagClass": "mg-tag-sales",
+    "title": "Your $1,000 project keeps growing. The client asks for \"just one more thing.\" Final value: still $1,000.",
+    "body": "You want to be helpful. You do not want to seem difficult. But you just did $2,000 of work for half the price.",
+    "options": [
+      "Compare the original brief with the final work delivered",
+      "Track extra work and calculate the effective hourly rate for the project",
+      "Compare the project price with similar competitors",
+      "Check whether the client was satisfied with the final work"
+    ],
+    "correct": 1,
+    "correctText": "Right. Extra work can quietly reduce what the project earns. Effective hourly rate is project fee divided by total hours worked. If a $1,000 project takes 25 hours, the effective rate is $40 an hour. Track the extra work so future quotes and boundaries improve.",
+    "wrongText": "Those checks may be useful, but they do not show what the growing scope did to the economics of this project. Track the extra work and divide the project fee by total hours worked.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "S10",
+    "tag": "Sales",
+    "tagClass": "mg-tag-sales",
+    "title": "You hire temporary staff for busy season. Quality drops. Returns spike. But revenue is up.",
+    "body": "The numbers look good. You sold more than last year. But half the orders came back.",
+    "options": [
+      "Hire better temps next year",
+      "Check your net revenue (revenue minus returns) and return rate by staff",
+      "Stop hiring temps",
+      "Check your marketing spend"
+    ],
+    "correct": 1,
+    "correctText": "Right. Revenue growth can be misleading when refunds and rework rise with it. Calculate net revenue after refunds and compare return rates and reasons by period, product, and—where reliable—who produced or delivered the work.",
+    "wrongText": "Staffing, capacity, and customer expectations could all contribute. Start with net revenue, return rates, and return reasons before deciding whether the issue is training, marketing, or the product.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "S11",
+    "tag": "Sales",
+    "tagClass": "mg-tag-sales",
+    "title": "Every customer buys your $50 product. No one knows you have a $500 version.",
+    "body": "You are afraid to mention the premium option. You assume no one can afford it. Your average order value is stuck.",
+    "options": [
+      "Create a marketing campaign for the premium product",
+      "Check your upsell rate and average order value by customer segment",
+      "Lower the premium price to $200",
+      "Check your website traffic"
+    ],
+    "correct": 1,
+    "correctText": "Right. You cannot sell what you do not offer. Start by checking upsell rate (customers who bought premium ÷ total customers) and average order value. If zero people know about the $500 option, your upsell rate is zero by design.",
+    "wrongText": "A marketing campaign is premature if you do not know whether anyone wants it. Lowering price before testing demand may be worth checking later, but it is not the clearest first step. Website traffic is less directly connected if the product is hidden. The first metric is: are you even offering it?",
+    "pattern": "So What? + Ratio Builder"
+  },
+  {
+    "id": "O4",
+    "tag": "Operations",
+    "tagClass": "mg-tag-operations",
+    "title": "You bought a $200/month software tool to \"save time.\" It saves you 3 hours a week. You bill $30/hour.",
+    "body": "The tool is impressive and the dashboard is useful. You want to know whether the time it saves is worth the monthly cost.",
+    "options": [
+      "Compare its monthly price with other software tools",
+      "Calculate the monthly value of time saved and compare it with the fee",
+      "Compare the annual plan with the monthly subscription",
+      "Check whether customer reviews improved after using it"
+    ],
+    "correct": 1,
+    "correctText": "Right. Three hours a week is about 12 hours a month. At $30 an hour, that time could be worth about $360. Against a $200 fee, the tool may create about $160 of value if the saved hours are used productively. Check both the time saved and what you do with it.",
+    "wrongText": "Price comparisons and customer reviews may help, but the direct question is whether the saved time is worth more than the fee. Convert weekly time saved into a monthly value, then check whether those hours are actually used productively.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "O5",
+    "tag": "Operations",
+    "tagClass": "mg-tag-operations",
+    "title": "You make products in batches of 50 to \"be efficient.\" But 30 sit unsold for months.",
+    "body": "Your unit cost looks low because you spread setup time across 50 units. But your cash is trapped in unsold inventory.",
+    "options": [
+      "Make bigger batches",
+      "Check your inventory turnover and cash tied up in stock",
+      "Lower your price to move the old stock",
+      "Check your marketing channels"
+    ],
+    "correct": 1,
+    "correctText": "Right. Efficiency on paper is not efficiency in cash. Start by checking inventory turnover (cost of goods sold ÷ average inventory). If stock sits for months, your cash is tied up. Make smaller batches more often.",
+    "wrongText": "Bigger batches worsen the problem. Lowering price destroys margin. Marketing channels do not fix overproduction. Start by checking how fast inventory converts to cash — inventory turnover.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "O6",
+    "tag": "Operations",
+    "tagClass": "mg-tag-operations",
+    "title": "You hired your first employee. Production doubled. But customer complaints tripled.",
+    "body": "You trained them for two days. Then you went back to selling. Now customers say the quality dropped.",
+    "options": [
+      "Fire the employee",
+      "Check your error rate and time spent on training vs. output",
+      "Work harder yourself",
+      "Check your employee satisfaction survey"
+    ],
+    "correct": 1,
+    "correctText": "Right. Production doubled while complaints tripled, so complaint count rose faster than output. Calculate complaints divided by deliveries for each period, group the complaint reasons, and compare work by producer before deciding whether training or the process needs attention.",
+    "wrongText": "Firing, working harder, or surveying staff may be premature. First compare complaint rates, complaint reasons, and work by producer. Those checks show where to investigate next.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "O7",
+    "tag": "Operations",
+    "tagClass": "mg-tag-operations",
+    "title": "You found a cheaper supplier. Materials cost dropped 30%. But returns doubled.",
+    "body": "Your costs look great on the spreadsheet. But customers are sending things back. You saved $5 per unit but lost $20 per return.",
+    "options": [
+      "Negotiate harder with the supplier",
+      "Calculate your true cost per unit including returns and rework",
+      "Switch back immediately",
+      "Check your marketing message"
+    ],
+    "correct": 1,
+    "correctText": "Right. The lower material price may be connected to the higher return rate, but confirm the reason for each return. Compare material savings with refunds, replacements, rework, and support time to calculate the true cost per delivered unit.",
+    "wrongText": "Supplier negotiation, switching back, and marketing expectations are all possible responses. First record why products were returned and compare the total cost before and after the supplier change.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "O8",
+    "tag": "Operations",
+    "tagClass": "mg-tag-operations",
+    "title": "During your first week with new software, you spend 5 hours learning it. It saves 2 hours that week.",
+    "body": "The learning time happens mainly at the beginning. The software should continue saving about two hours every week.",
+    "options": [
+      "Decide after the first week because the tool lost three hours",
+      "Track cumulative time invested and saved over several weeks",
+      "Compare its feature list with more advanced software",
+      "Replace it immediately with a simpler tool"
+    ],
+    "correct": 1,
+    "correctText": "Right. One week is too early to judge. You are three hours behind after week one, but if the tool continues saving two hours every week, it may soon repay the learning time. Track cumulative time invested and saved over a fair period.",
+    "wrongText": "A one-time learning cost should not be treated as a permanent weekly cost. Track the time invested and the time saved over several weeks before deciding whether the tool is worthwhile.",
+    "pattern": "Trend Tracker"
+  },
+  {
+    "id": "O9",
+    "tag": "Operations",
+    "tagClass": "mg-tag-operations",
+    "title": "You outsourced delivery to save money. Customers complain about timing. But costs are down.",
+    "body": "Your P&L looks better. But your reviews mention \"late\" and \"damaged\" more than ever.",
+    "options": [
+      "Find a cheaper courier",
+      "Calculate your net cost including refunds, complaints, and reputation damage",
+      "Bring delivery back in-house immediately",
+      "Check your customer acquisition cost"
+    ],
+    "correct": 1,
+    "correctText": "Right. Start by checking total cost of delivery including refunds, complaint handling, and lost repeat customers. If you save $500/month on shipping but lose $2,000 in refunds and repeat business, outsourcing costs $1,500 more.",
+    "wrongText": "Cheaper couriers worsen the problem. Bringing it back in-house is emotional until you run the numbers. New customer CAC does not measure the customers you are losing. Start by checking total cost including hidden losses.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "O10",
+    "tag": "Operations",
+    "tagClass": "mg-tag-operations",
+    "title": "Your equipment breaks down monthly. You patch it. Downtime is 20% of your month.",
+    "body": "A new machine costs $5,000. Repairs cost $200 each time. You tell yourself you are saving money.",
+    "options": [
+      "Keep patching",
+      "Calculate your downtime cost and compare to replacement cost over 12 months",
+      "Buy a used machine",
+      "Check if you can rent equipment instead"
+    ],
+    "correct": 1,
+    "correctText": "Right. Start by checking downtime cost (lost revenue per hour × hours down + repair cost). If 20% downtime costs you $1,000/month in lost output, a $5,000 machine pays for itself in 5 months. Patches are expensive if they stop production.",
+    "wrongText": "$200 is cheaper than $5,000 only if you ignore lost production. Used machines might have the same problem. Renting is an option, but the first step is knowing what downtime actually costs you in lost revenue.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "O11",
+    "tag": "Operations",
+    "tagClass": "mg-tag-operations",
+    "title": "Your best employee quit. No one knows how they did their job. Output dropped 40%.",
+    "body": "They were with you for three years. They \"just knew\" how everything worked. Now you are starting over.",
+    "options": [
+      "Hire someone better",
+      "Document your processes and calculate output per employee before and after",
+      "Offer them more money to come back",
+      "Check your employee satisfaction"
+    ],
+    "correct": 1,
+    "correctText": "Right. Start by checking output per employee and process documentation coverage. If one person leaving drops output 40%, your business is fragile. Document everything. The cost of documentation is tiny compared to the cost of lost knowledge.",
+    "wrongText": "Hiring better people does not fix broken processes. Offering more money is a band-aid. Satisfaction surveys are useful but do not recover lost output. The fix is documentation and cross-training. Start by checking process dependency risk.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "CS3",
+    "tag": "Customer Success",
+    "tagClass": "mg-tag-customer-success",
+    "title": "You used to get 10 new customers a month from referrals. Now you get zero. But your NPS score is still \"good.\"",
+    "body": "Customers say they are satisfied. But they are not telling their friends anymore.",
+    "options": [
+      "Trust the NPS",
+      "Check your referral rate and ask \"What changed in the experience?\"",
+      "Spend more on ads to replace referrals",
+      "Check your social media engagement"
+    ],
+    "correct": 1,
+    "correctText": "Right. NPS measures intent. Referrals measure behavior. Start by checking referral rate (referred customers ÷ total new customers). If behavior changed while intent stayed high, something specific broke in the experience.",
+    "wrongText": "Trusting NPS over behavior is dangerous. Ads replace referrals but at higher cost. Social media engagement is less directly connected to why real customers stopped talking. Start by checking actual referral rate, not stated satisfaction.",
+    "pattern": "So What?"
+  },
+  {
+    "id": "CS4",
+    "tag": "Customer Success",
+    "tagClass": "mg-tag-customer-success",
+    "title": "Your customer support messages tripled this month. Most are about the same issue.",
+    "body": "You are proud that you respond quickly. But you are treating the symptom, not the disease.",
+    "options": [
+      "Hire a support assistant",
+      "Check your complaint rate by issue type and fix the root cause",
+      "Create an FAQ page",
+      "Check your customer acquisition cost"
+    ],
+    "correct": 1,
+    "correctText": "Right. Support volume is a lagging indicator of a product or process failure. Start by checking complaint rate by category. If 60% of complaints are about delivery time, fix delivery time — do not hire more people to apologize for it.",
+    "wrongText": "Hiring support treats the symptom. An FAQ helps but does not fix the root cause. CAC is less directly connected to existing customer complaints. Start by checking complaint category concentration — find the top issue and eliminate it.",
+    "pattern": "So What? + Ratio Builder"
+  },
+  {
+    "id": "CS5",
+    "tag": "Customer Success",
+    "tagClass": "mg-tag-customer-success",
+    "title": "You calculate that a customer is worth $800 over their lifetime. But your average customer only makes 2 purchases and then disappears.",
+    "body": "You used industry benchmarks for \"average purchases per customer.\" But your actual behavior is different.",
+    "options": [
+      "Trust the benchmark",
+      "Calculate your actual LTV using your own sales data, not industry averages",
+      "Increase your prices to match the benchmark LTV",
+      "Check your competitor's customer behavior"
+    ],
+    "correct": 1,
+    "correctText": "Right. Benchmarks are guesses. Your data is truth. Start by checking actual LTV (average order value × actual repeat purchases). If your customers buy twice and leave, your LTV is 2× AOV, not $800. Plan with real numbers.",
+    "wrongText": "Trusting benchmarks over your own data is dangerous. Raising prices does not create loyalty. Competitor behavior is less directly connected to your customers. The metric must come from your actual sales records.",
+    "pattern": "So What?"
+  },
+  {
+    "id": "CS7",
+    "tag": "Customer Success",
+    "tagClass": "mg-tag-customer-success",
+    "title": "Your all-time rating is still 4.8. But this month’s average rating dropped to 3.2.",
+    "body": "The older reviews still make the overall score look strong. Recent customers, however, are reporting a worse experience.",
+    "options": [
+      "Rely on the all-time score because it includes more reviews",
+      "Check the recent review trend and investigate what changed",
+      "Ask satisfied customers to leave more reviews this month",
+      "Compare your total review count with competitors"
+    ],
+    "correct": 1,
+    "correctText": "Right. The all-time score describes the long history, while the recent average may warn that something changed. Read the recent comments, group the issues, and investigate the product, delivery, or service before the overall score falls.",
+    "wrongText": "The older score and total review count may hide a recent change. Start with the recent review trend and the reasons customers give, then investigate what changed in the experience.",
+    "pattern": "Trend Tracker"
+  },
+  {
+    "id": "CS8",
+    "tag": "Customer Success",
+    "tagClass": "mg-tag-customer-success",
+    "title": "You launched a loyalty card. Usage is high. But average spend per visit dropped.",
+    "body": "Customers come back more often. But they buy less each time. Your revenue per customer is flat or down.",
+    "options": [
+      "Celebrate the loyalty",
+      "Check your average transaction value and revenue per loyal customer",
+      "Add more rewards to increase spending",
+      "Check your total customer count"
+    ],
+    "correct": 1,
+    "correctText": "Right. Loyalty without spend is just habit. Start by checking revenue per loyal customer (total revenue from card users ÷ number of card users). If they visit twice as often but spend half as much, you broke even at best.",
+    "wrongText": "Frequency without value is not growth. Adding rewards adds cost without fixing the spend issue. Total customer count is less directly connected if each one spends less. Start by checking whether loyal customers are worth more, not just whether they return.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "CS9",
+    "tag": "Customer Success",
+    "tagClass": "mg-tag-customer-success",
+    "title": "60% of new subscribers cancel in the first 7 days. After that, they stay for years.",
+    "body": "Your marketing brings them in. Your product keeps them. But something in between is broken.",
+    "options": [
+      "Improve your marketing",
+      "Check your onboarding completion rate and early-stage churn trend",
+      "Lower your price",
+      "Check your competitor's free trial length"
+    ],
+    "correct": 1,
+    "correctText": "Right. The first seven days are where the leak appears, but the metric does not prove the cause. Compare onboarding completion, early churn by acquisition source, and cancellation reasons to investigate whether expectations, targeting, setup, or early product value needs attention.",
+    "wrongText": "Marketing, price, and competitor offers are possible contributors, but no single cause is proven. Start with the first seven days: check onboarding completion, acquisition source, and cancellation reasons.",
+    "pattern": "So What? + Ratio Builder"
+  },
+  {
+    "id": "CS10",
+    "tag": "Customer Success",
+    "tagClass": "mg-tag-customer-success",
+    "title": "You survey 100 customers. 20 respond, all happy. But 40% of customers never return.",
+    "body": "Your satisfaction score is perfect. Your retention rate is terrible. The numbers contradict each other.",
+    "options": [
+      "Trust the survey",
+      "Check your response rate and compare survey respondents to non-respondents",
+      "Send more surveys",
+      "Check your NPS score"
+    ],
+    "correct": 1,
+    "correctText": "Right. A 20% response rate may represent the customers most willing to answer rather than the whole customer base. Compare response and return behaviour, and treat the happy responses as one signal rather than proof that every customer is satisfied.",
+    "wrongText": "More surveys or a different score may still reach the same type of respondent. First check who answered, who did not, and whether their return behaviour differs. The survey may not represent the full customer base.",
+    "pattern": "So What?"
+  },
+  {
+    "id": "CS11",
+    "tag": "Customer Success",
+    "tagClass": "mg-tag-customer-success",
+    "title": "You offer $20 for referrals. Referrals spike. But referred customers never buy again.",
+    "body": "Your referral program is \"working\" by the numbers. But the customers it brings are one-and-done.",
+    "options": [
+      "Increase the referral bonus",
+      "Check your referral quality rate (repeat rate of referred vs. organic customers)",
+      "Run a marketing campaign to retain referred customers",
+      "Check your total referral count"
+    ],
+    "correct": 1,
+    "correctText": "Right. Compare referred and other customers using repeat rate, acquisition cost, refunds, and estimated gross profit. A one-time referred customer may still be worthwhile, but the $20 reward is only justified if the customer produces enough value.",
+    "wrongText": "Referral volume alone does not show whether the programme creates value. Compare the cost and customer behaviour by source before increasing the reward or launching another campaign.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "X1",
+    "tag": "Cross-Functional",
+    "tagClass": "mg-tag-cross-functional",
+    "title": "You hired 3 people. Revenue went up 20%. Costs went up 60%. You are busier but poorer.",
+    "body": "You assumed more people meant more profit. But the new hires need tools, space, training, and management time.",
+    "options": [
+      "Check your revenue per employee and cost per employee trends",
+      "Fire one person",
+      "Check your marketing ROI",
+      "Check your customer satisfaction"
+    ],
+    "correct": 0,
+    "correctText": "Right. Compare revenue, gross profit, labour cost, capacity, and output before and after hiring. Costs can rise before new employees become fully productive, so the first period may suggest a problem without proving that the hires were a mistake.",
+    "wrongText": "Firing is premature, while marketing and satisfaction show only parts of the picture. First compare the additional labour cost with the gross profit, output, and capacity the hires helped create.",
+    "pattern": "Ratio Builder + Trend Tracker"
+  },
+  {
+    "id": "X2",
+    "tag": "Cross-Functional",
+    "tagClass": "mg-tag-cross-functional",
+    "title": "90% of your sales come from Amazon. They raised their fees by 15%.",
+    "body": "Your business lives on one platform. You have no direct customer relationship. And now your margin is being squeezed.",
+    "options": [
+      "Accept the fee increase",
+      "Calculate your platform dependency ratio and build a direct channel",
+      "Raise your prices on Amazon to offset the fee",
+      "Check your Amazon review count"
+    ],
+    "correct": 1,
+    "correctText": "Right. When 90% of sales depend on one platform, a fee or rule change can materially affect the business. Calculate the new gross margin after fees, then investigate practical ways to reduce channel concentration over time.",
+    "wrongText": "Pricing, reviews, and accepting the fee each address only part of the issue. First calculate the effect on margin and recognise the risk of depending heavily on one platform.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "X3",
+    "tag": "Cross-Functional",
+    "tagClass": "mg-tag-cross-functional",
+    "title": "You launched a new product line. Marketing spent $5,000. Sales are $3,000. Operations is overwhelmed.",
+    "body": "Everyone is busy. Marketing says the launch was a success. Sales says the product is hard to sell. Operations says they cannot keep up.",
+    "options": [
+      "Spend more on marketing",
+      "Calculate your product-line profitability including marketing, operations, and return costs",
+      "Discontinue the product",
+      "Check your website traffic for the new product page"
+    ],
+    "correct": 1,
+    "correctText": "Right. Sales alone do not show whether the launch is worthwhile. Check gross profit, launch marketing, operating workload, refunds, and expected repeat sales. Then decide whether the shortfall is a temporary launch investment or an unsustainable product.",
+    "wrongText": "More marketing or immediate cancellation may be premature. Build the product line’s full picture first: gross profit, launch cost, operating workload, returns, and likely repeat sales.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "X4",
+    "tag": "Cross-Functional",
+    "tagClass": "mg-tag-cross-functional",
+    "title": "You cut prices to compete. Sales volume doubled. Net profit fell by half. Customer complaints tripled.",
+    "body": "You won the price war. But you are working twice as hard for less money. And the customers you attracted are the most demanding.",
+    "options": [
+      "Cut prices further",
+      "Calculate your profit per unit, customer quality score, and service cost per customer segment",
+      "Raise prices back to normal",
+      "Check your competitor's pricing"
+    ],
+    "correct": 1,
+    "correctText": "Right. Compare gross profit per order, support time, complaint rate, refunds, and repeat purchasing for discounted and full-price customers. The discount may be attracting customers who cost more to serve, but the figures should be checked before changing the offer.",
+    "wrongText": "Further discounts, an immediate price reversal, or competitor prices do not show whether the new volume is worthwhile. Compare gross profit and service costs by customer group, then investigate the pricing decision.",
+    "pattern": "Ratio Builder"
+  },
+  {
+    "id": "X5",
+    "tag": "Cross-Functional",
+    "tagClass": "mg-tag-cross-functional",
+    "title": "You opened a second location. Revenue is up 35%. But your original location revenue dropped 20%.",
+    "body": "The new shop is busy. The old shop is quieter. You are paying rent on two spaces but may not have grown at all.",
+    "options": [
+      "Compare total revenue before and after the second location",
+      "Compare revenue and profit by location and investigate the original location’s decline",
+      "Compare customer counts at the two locations",
+      "Compare marketing spending for each location"
+    ],
+    "correct": 1,
+    "correctText": "Right. Total revenue is 35% higher, and that figure already includes the original location’s decline. But revenue alone does not show whether the expansion is worthwhile. Compare revenue, direct costs, and fixed costs by location, and investigate whether customers moved between locations or the original site weakened for another reason.",
+    "wrongText": "Each comparison offers part of the picture, but the key question is whether the two-location business produces more profit after the additional costs. Compare profit by location and investigate why the original location declined; the numbers do not prove cannibalisation by themselves.",
+    "pattern": "So What? + Ratio Builder"
+  },
+  {
+    "id": "X6",
+    "tag": "Cross-Functional",
+    "tagClass": "mg-tag-cross-functional",
+    "title": "You invested $10,000 in a new website. Traffic is up. Bounce rate is down. But sales are flat.",
+    "body": "The web designer showed you beautiful analytics. Pages load faster. Mobile looks great. But the cash register is silent.",
+    "options": [
+      "Invest more in SEO",
+      "Check your conversion rate, average order value, and sales funnel drop-off by page",
+      "Redesign the checkout",
+      "Check your social media shares"
+    ],
+    "correct": 1,
+    "correctText": "Right. Traffic and bounce rate describe attention, while sales show the final result. Check conversion and where visitors leave before buying. The pattern may suggest a mismatch in traffic, offer, product pages, or checkout; it does not identify the cause by itself.",
+    "wrongText": "More traffic, another redesign, or more social attention may not change sales. First check conversion and where visitors leave, then investigate the most likely cause.",
+    "pattern": "So What? + Ratio Builder"
+  }
+];
+
+let currentIndex = 0;
+let answered = false;
+let selectedAnswers = [];
+let shuffledOrders = [];
+
+function shuffledOptionOrder(optionCount) {
+  const order = Array.from({ length: optionCount }, (_, index) => index);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  return order;
+}
+
+function show(id) {
+  document.getElementById('landing').classList.add('mg-hidden');
+  document.getElementById('scenario').classList.add('mg-hidden');
+  document.getElementById('finish').classList.add('mg-hidden');
+  document.getElementById(id).classList.remove('mg-hidden');
+}
+
+function startPractice() {
+  currentIndex = 0;
+  answered = false;
+  selectedAnswers = Array(scenarios.length).fill(null);
+  shuffledOrders = scenarios.map(s => shuffledOptionOrder(s.options.length));
+  renderScenario();
+  show('scenario');
+}
+
+function renderScenario() {
+  const s = scenarios[currentIndex];
+  answered = false;
+
+  document.getElementById('current-num').textContent = currentIndex + 1;
+  document.getElementById('total-num').textContent = scenarios.length;
+  document.getElementById('progress-fill').style.width = ((currentIndex / scenarios.length) * 100) + '%';
+
+  const tagEl = document.getElementById('tag');
+  tagEl.textContent = s.tag;
+  tagEl.className = 'mg-tag ' + s.tagClass;
+
+  document.getElementById('scenario-title').textContent = s.title;
+  document.getElementById('scenario-body').textContent = s.body;
+
+  const optsContainer = document.getElementById('options');
+  optsContainer.innerHTML = '';
+
+  shuffledOrders[currentIndex].forEach((originalIndex, displayIndex) => {
+    const opt = s.options[originalIndex];
+    const btn = document.createElement('button');
+    btn.className = 'mg-option';
+    btn.dataset.originalIndex = originalIndex;
+    btn.innerHTML = `<span class="mg-option-letter">${String.fromCharCode(65 + displayIndex)}</span><span class="mg-option-text">${opt}</span>`;
+    btn.onclick = () => selectOption(originalIndex);
+    optsContainer.appendChild(btn);
+  });
+
+  const feedback = document.getElementById('feedback');
+  feedback.className = 'mg-feedback mg-hidden';
+  feedback.innerHTML = '';
+  const nextButton = document.getElementById('next-btn');
+  nextButton.classList.remove('mg-hidden');
+  nextButton.textContent = currentIndex === scenarios.length - 1 ? 'Finish' : 'Next Situation';
+  nextButton.disabled = selectedAnswers[currentIndex] === null;
+
+  if (selectedAnswers[currentIndex] !== null) {
+    showAnswer(selectedAnswers[currentIndex]);
+  }
+
+}
+
+function selectOption(index) {
+  if (answered) return;
+  selectedAnswers[currentIndex] = index;
+  showAnswer(index);
+}
+
+function showAnswer(index) {
+  answered = true;
+
+  const s = scenarios[currentIndex];
+  const opts = document.querySelectorAll('.mg-option');
+
+  opts.forEach(btn => {
+    const originalIndex = Number(btn.dataset.originalIndex);
+    btn.classList.add('disabled');
+    if (originalIndex === s.correct) {
+      btn.classList.add('correct');
+    } else if (originalIndex === index) {
+      btn.classList.add('wrong');
+    }
+  });
+
+  const fb = document.getElementById('feedback');
+  const isCorrect = index === s.correct;
+  fb.className = 'mg-feedback ' + (isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? s.correctText : s.wrongText) +
+    `<div class="mg-pattern"><span class="mg-pattern-dot"></span>Thinking pattern: ${s.pattern}</div>`;
+  fb.classList.remove('mg-hidden');
+
+  document.getElementById('next-btn').classList.remove('mg-hidden');
+  document.getElementById('next-btn').textContent = currentIndex === scenarios.length - 1 ? 'Finish' : 'Next Situation';
+  document.getElementById('next-btn').disabled = false;
+}
+
+function nextScenario() {
+  if (!answered) return;
+  currentIndex++;
+  if (currentIndex >= scenarios.length) {
+    show('finish');
+  } else {
+    renderScenario();
+  }
+}
+
+function previousScenario() {
+  if (currentIndex === 0) {
+    show('landing');
+  } else {
+    currentIndex--;
+    renderScenario();
+  }
+}
+
+function restartPractice() {
+  startPractice();
+}
+
+</script>
+
+</body>
+</html>

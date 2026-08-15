@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metric Gym — Practice 1: Choose the Vital Sign</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --text-secondary: #555555;
+      --text-muted: #888888;
+      --border: #e5e5e5;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mg-card {
+      background: var(--surface);
+      max-width: 720px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 48px 32px;
+      box-shadow: var(--shadow);
+    }
+
+    @media (min-width: 768px) {
+      html,
+      body {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+      }
+
+      body {
+        padding: 12px 0;
+      }
+
+      .mg-card {
+        margin: 0 auto;
+        min-height: auto;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        padding: 40px 48px;
+      }
+    }
+
+    .mg-header { text-align: center; margin-bottom: 40px; }
+
+    .mg-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .mg-subtitle {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .mg-divider {
+      width: 48px;
+      height: 3px;
+      background: var(--accent);
+      margin: 0 auto 24px;
+      border-radius: 2px;
+    }
+
+    .mg-intro p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .mg-highlight {
+      background: var(--accent-light);
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      margin: 24px 0;
+      border-radius: 0 8px 8px 0;
+      text-align: center;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .mg-practice-title {
+      margin: 34px 0 14px;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.35;
+      text-align: center;
+      color: var(--text);
+    }
+
+    .mg-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 32px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      text-decoration: none;
+    }
+
+    .mg-btn-primary {
+      background: var(--text);
+      color: #fff;
+    }
+    .mg-btn-primary:hover { background: #333; transform: translateY(-1px); }
+
+    .mg-btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .mg-btn-outline:hover { border-color: var(--text); }
+
+    .mg-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .mg-btn-primary:disabled:hover {
+      background: var(--text);
+      transform: none;
+    }
+
+    .mg-center { text-align: center; }
+    .mg-mt-2 { margin-top: 32px; }
+
+    .mg-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mg-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .mg-progress-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .mg-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .mg-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .mg-tag-finance { background: #dbeafe; color: #1e40af; }
+    .mg-tag-marketing { background: #fce7f3; color: #9d174d; }
+    .mg-tag-sales { background: #d1fae5; color: #065f46; }
+    .mg-tag-operations { background: #fef3c7; color: #92400e; }
+    .mg-tag-customer-success { background: #e0e7ff; color: #3730a3; }
+
+    .mg-scenario-title {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .mg-scenario-body {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+      line-height: 1.65;
+    }
+
+    .mg-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .mg-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      width: 100%;
+    }
+
+    .mg-option:hover {
+      border-color: var(--text-muted);
+      background: #fafafa;
+    }
+
+    .mg-option-letter {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+
+    .mg-option-text { line-height: 1.5; padding-top: 3px; }
+
+    .mg-option.correct {
+      border-color: var(--success);
+      background: var(--success-light);
+    }
+    .mg-option.correct .mg-option-letter {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    .mg-option.wrong {
+      border-color: var(--danger);
+      background: var(--danger-light);
+      opacity: 0.7;
+    }
+    .mg-option.wrong .mg-option-letter {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+    }
+
+    .mg-option.disabled {
+      cursor: default;
+      pointer-events: none;
+    }
+    .mg-option:not(.correct):not(.wrong).disabled { opacity: 0.5; }
+
+    .mg-feedback {
+      padding: 20px 22px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      font-size: 15px;
+      line-height: 1.65;
+      border-left: 3px solid;
+    }
+
+    .mg-feedback.correct {
+      background: var(--success-light);
+      border-color: var(--success);
+      color: #14532d;
+    }
+
+    .mg-feedback.wrong {
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: #7f1d1d;
+    }
+
+    .mg-pattern {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .mg-pattern-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .mg-hidden { display: none !important; }
+
+    .mg-finish h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .mg-finish p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .mg-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .mg-what-practise {
+      margin: 28px 0;
+      text-align: left;
+    }
+    .mg-what-practise h3 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .mg-what-practise ul {
+      list-style: none;
+      padding: 0;
+    }
+    .mg-what-practise li {
+      padding: 6px 0;
+      font-size: 15px;
+      color: var(--text-secondary);
+      padding-left: 20px;
+      position: relative;
+    }
+    .mg-what-practise li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Compact desktop layout: sized to fit a standard laptop viewport. */
+    @media (min-width: 768px) {
+      .mg-card {
+        width: calc(100% - 24px);
+        max-width: 960px;
+        height: calc(100vh - 24px);
+        height: calc(100dvh - 24px);
+        padding: 22px 34px;
+      }
+
+      #landing:not(.mg-hidden) {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+      }
+
+      #landing .mg-header,
+      #landing .mg-intro {
+        width: 100%;
+      }
+
+      #scenario:not(.mg-hidden) {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #scenario .mg-tag {
+        align-self: flex-start;
+      }
+
+      #scenario .mg-nav {
+        margin-top: auto !important;
+        padding-top: 8px;
+        flex-shrink: 0;
+      }
+
+      .mg-header {
+        margin-bottom: 20px;
+      }
+
+      .mg-header h1 {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+
+      .mg-subtitle {
+        font-size: 12px;
+        margin-bottom: 12px;
+      }
+
+      .mg-divider {
+        margin-bottom: 14px;
+      }
+
+      .mg-intro p {
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      .mg-highlight {
+        padding: 11px 16px;
+        margin: 14px 0;
+        font-size: 14px;
+      }
+
+      .mg-practice-title {
+        margin: 18px 0 8px;
+        font-size: 18px;
+      }
+
+      .mg-btn {
+        padding: 10px 24px;
+        font-size: 14px;
+      }
+
+      .mg-mt-2 {
+        margin-top: 16px;
+      }
+
+      .mg-progress {
+        margin-bottom: 16px;
+        font-size: 12px;
+      }
+
+      .mg-tag {
+        margin-bottom: 8px;
+      }
+
+      .mg-scenario-title {
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+
+      .mg-scenario-body {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 14px;
+      }
+
+      .mg-options {
+        gap: 7px;
+        margin-bottom: 12px;
+      }
+
+      .mg-option {
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+
+      .mg-option-letter {
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
+      }
+
+      .mg-feedback {
+        padding: 14px 17px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .mg-pattern {
+        margin-top: 8px;
+        font-size: 11px;
+      }
+
+      .mg-meta {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="mg-card">
+  <!-- LANDING -->
+  <div id="landing">
+    <div class="mg-header">
+      <div class="mg-subtitle">The Business Vital Signs</div>
+      <h1>Welcome to the Metric Gym</h1>
+      <div class="mg-divider"></div>
+    </div>
+
+    <div class="mg-intro">
+      <p>Practise reading the warning signs of a business.</p>
+      <div class="mg-highlight">
+        Each exercise gives you a business situation and asks which metric you would check first—or what you should investigate next.
+      </div>
+      <p>This is practice, not a test. Each answer includes a short explanation.</p>
+
+      <h2 class="mg-practice-title">Practice 1: Choose the Vital Sign</h2>
+      <p>You have completed Chapters 5–9 and learned the basic vital signs of a business.</p>
+      <p>Now practise looking at everyday business situations, working out what may be happening and choosing the metric that can help you understand it.</p>
+
+      <p class="mg-meta" style="text-align:center; margin-top:24px;">
+        15 situations &nbsp;·&nbsp; 10–15 minutes
+      </p>
+
+      <div class="mg-center mg-mt-2">
+        <button class="mg-btn mg-btn-primary" onclick="startPractice()">Start Practice 1</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO -->
+  <div id="scenario" class="mg-hidden">
+    <div class="mg-progress">
+      <span>Situation <span id="current-num">1</span> of <span id="total-num">15</span></span>
+      <div class="mg-progress-bar"><div class="mg-progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="tag" class="mg-tag"></div>
+    <h2 class="mg-scenario-title" id="scenario-title"></h2>
+    <p class="mg-scenario-body" id="scenario-body"></p>
+
+    <div class="mg-options" id="options"></div>
+
+    <div id="feedback" class="mg-feedback mg-hidden"></div>
+
+    <div class="mg-nav" id="next-container" style="margin-top:8px;">
+      <button class="mg-btn mg-btn-outline" id="back-btn" onclick="previousScenario()">Back</button>
+      <button class="mg-btn mg-btn-primary" id="next-btn" onclick="nextScenario()">Next Situation</button>
+    </div>
+  </div>
+
+  <!-- FINISH -->
+  <div id="finish" class="mg-hidden mg-center">
+    <div class="mg-header">
+      <div class="mg-subtitle">Practice 1 Complete</div>
+      <h1>You have finished the first set</h1>
+      <div class="mg-divider"></div>
+    </div>
+    <p>You practised choosing the right vital sign across Finance, Marketing, Sales, Operations, and Customer Success.</p>
+    <p style="margin-top:12px;">When you finish Chapter 10, return for <strong>Practice 2: Read the Full Dashboard</strong> — where multiple warning lights flash at once.</p>
+    <div class="mg-mt-2">
+      <button class="mg-btn mg-btn-outline" onclick="restartPractice()">Start Over</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const scenarios = [
+  {
+    id: "F1", tag: "Finance + Marketing", tagClass: "mg-tag-finance",
+    title: "Revenue jumped 40% this month. You spent heavily on ads. But your bank balance is lower than last month.",
+    body: "Sales look great on paper. Your ad campaign brought in new customers. But when you check your bank account, you have less cash than before you started the campaign.",
+    options: [
+      "Check your conversion rate",
+      "Check your customer acquisition cost and monthly cash flow",
+      "Check your follower count",
+      "Check your delivery time"
+    ],
+    correct: 1,
+    correctText: "Right. Revenue is not cash. You need to know what each customer cost you (CAC) and whether cash actually landed in your bank (cash flow). A customer who pays in 60 days helps revenue but hurts your bank today.",
+    wrongText: "Not quite. Conversion rate and follower count explain marketing. Delivery time explains operations. But the problem here is money: you spent cash on ads and may not have collected it back yet. You need to check what a customer cost you (CAC) and whether your bank balance actually grew (cash flow).",
+    pattern: "So What? + Ratio Builder"
+  },
+  {
+    id: "F2", tag: "Finance", tagClass: "mg-tag-finance",
+    title: "Revenue is up 20% over six months. But your gross margin dropped from 60% to 35%.",
+    body: "You are selling more than ever. But for every dollar that comes in, you are keeping less. Something between the sale and your pocket is eating your profit.",
+    options: [
+      "Look at your operating expenses",
+      "Look at your direct costs",
+      "Look at your marketing channels",
+      "Look at your repeat purchase rate"
+    ],
+    correct: 1,
+    correctText: "Exactly. Gross margin is (Revenue minus Direct Costs). If revenue rises but gross margin falls, the cost of making or delivering each sale has gone up. You are discounting too much, using more expensive materials, or your delivery costs have risen. Operating expenses affect net margin, not gross margin.",
+    wrongText: "Close, but not the first place to look. Gross margin only cares about direct costs — what you spend to make or deliver each unit. Rent and software are operating expenses. They affect net profit, not gross margin. The leak is in your making or delivery cost.",
+    pattern: "Trend Tracker"
+  },
+  {
+    id: "F4", tag: "Finance", tagClass: "mg-tag-finance",
+    title: "Your balance sheet looks strong. You have $40,000 in assets. But you cannot pay your $2,000 rent this month.",
+    body: "The assets are mostly unsold stock sitting in a warehouse. Your cash is gone.",
+    options: [
+      "Check your asset turnover",
+      "Check your cash runway and liquid cash position",
+      "Check your customer lifetime value",
+      "Check your cost per lead"
+    ],
+    correct: 1,
+    correctText: "Right. Inventory is an asset, not cash. If you cannot pay rent, the metric that matters is cash runway (cash in bank ÷ monthly burn). Assets on paper do not pay bills.",
+    wrongText: "Asset turnover and LTV are useful but not urgent. The immediate problem is liquidity — you have stuff but no cash. Start by checking cash runway.",
+    pattern: "So What?"
+  },
+  {
+    id: "M1", tag: "Marketing", tagClass: "mg-tag-marketing",
+    title: "Your ad got 10,000 views and 800 clicks. You spent $500. But only 3 people bought anything.",
+    body: "The ad agency is celebrating the \"high engagement.\" You are looking at three sales.",
+    options: [
+      "Check your cost per click",
+      "Check your cost per lead and lead-to-customer conversion rate",
+      "Check your website load speed",
+      "Check your social media follower count"
+    ],
+    correct: 1,
+    correctText: "Right. Views and clicks are upstream. Sales are downstream. Start by checking cost per acquisition (spend ÷ customers) and conversion rate (customers ÷ leads). 10,000 views mean nothing if only 3 buy.",
+    wrongText: "Cost per click only tells you if clicks are cheap. Website speed might matter, but it may be worth checking later, but it is not the clearest first step. Follower count is less directly connected. The gap is between clicks and sales. That is conversion rate.",
+    pattern: "So What? + Ratio Builder"
+  },
+  {
+    id: "M2", tag: "Marketing", tagClass: "mg-tag-marketing",
+    title: "You spend $2,000 on Instagram ads and $500 on Google ads. Instagram brings 200 leads. Google brings 20.",
+    body: "Instagram looks like the winner. But when you look closer, Instagram leads rarely buy. Google leads almost always do.",
+    options: [
+      "Shift all budget to Instagram",
+      "Check channel-specific conversion rate and channel CAC",
+      "Increase Google ad spend immediately",
+      "Check your organic vs. paid ratio"
+    ],
+    correct: 1,
+    correctText: "Right. Lead volume means nothing without lead quality. Start by checking channel CAC (cost per customer by source). If Instagram costs $200 per customer and Google costs $25, the numbers speak for themselves.",
+    wrongText: "Shifting all budget to Instagram based on lead volume is a trap. Increasing Google spend is premature without knowing the cost per customer. Organic ratio is less directly connected here — you are comparing two paid channels.",
+    pattern: "Ratio Builder"
+  },
+  {
+    id: "M5", tag: "Marketing", tagClass: "mg-tag-marketing",
+    title: "Your cost per lead was $8 for six months. This month it jumped to $28. Nothing else changed.",
+    body: "Same product. Same price. Same audience. But the ad that worked forever suddenly stopped working.",
+    options: [
+      "Increase your ad budget",
+      "Refresh your ad creative and check your cost per lead trend",
+      "Lower your price",
+      "Check your competitor's ads"
+    ],
+    correct: 1,
+    correctText: "Right. Ad creative wears out. The same image or message fatigues. Start by checking CPL trend over time. Refresh the creative before you spend more.",
+    wrongText: "Throwing more money at tired ads is wasteful. Lowering price is a panic move. Competitor ads might matter, but the simplest explanation is creative fatigue. Track CPL trend.",
+    pattern: "Trend Tracker"
+  },
+  {
+    id: "S1", tag: "Sales", tagClass: "mg-tag-sales",
+    title: "You sent 50 proposals this month. Your highest ever. But you only won 2 deals.",
+    body: "You feel productive. You are working hard. But 96% of your effort is wasted.",
+    options: [
+      "Send more proposals",
+      "Check your win/loss ratio and average deal size",
+      "Lower your prices",
+      "Check your marketing channels"
+    ],
+    correct: 1,
+    correctText: "Right. Proposals sent is an activity count; win rate shows how often that activity becomes business. Two wins from 50 proposals is 4%. Record a short reason for each loss to investigate lead quality, price, offer, or follow-up.",
+    wrongText: "More proposals or lower prices may not solve the underlying issue. First calculate the win rate and record why proposals were lost. That tells you where to investigate next.",
+    pattern: "Ratio Builder"
+  },
+  {
+    id: "S2", tag: "Sales", tagClass: "mg-tag-sales",
+    title: "You raised your price 20%. Conversion rate stayed the same. But revenue per lead dropped.",
+    body: "The same percentage of people are buying. But something about the deal size changed.",
+    options: [
+      "Lower your price back to the old rate",
+      "Check your average order value and what customers are actually buying",
+      "Spend more on marketing",
+      "Check your competitor's pricing"
+    ],
+    correct: 1,
+    correctText: "Right. If conversion is flat but revenue per lead drops, customers are buying cheaper packages or fewer add-ons. Start by checking average order value.",
+    wrongText: "Lowering price is a panic move. More marketing does not fix deal size. Competitor pricing is external; your data is internal. Check what customers actually put in their cart.",
+    pattern: "Ratio Builder"
+  },
+  {
+    id: "S6", tag: "Sales", tagClass: "mg-tag-sales",
+    title: "Your conversion rate is 8%. But 40% of customers ask for a refund within 30 days.",
+    body: "Your sales numbers look healthy. But you are giving back almost half the money.",
+    options: [
+      "Spend more on marketing to replace the refunds",
+      "Check your refund rate and what happens between sale and delivery",
+      "Lower your price",
+      "Check your competitor's refund policy"
+    ],
+    correct: 1,
+    correctText: "Right. A refunded sale did not become kept revenue. A useful check is (sales minus refunded sales) divided by leads. Then record why refunds happened so you can investigate marketing expectations, product quality, delivery, or policy.",
+    wrongText: "More marketing or a lower price may hide the warning without explaining it. Check the refund rate and the reasons given before deciding whether the issue sits in the offer, product, delivery, or policy.",
+    pattern: "So What? + Ratio Builder"
+  },
+  {
+    id: "O1", tag: "Operations", tagClass: "mg-tag-operations",
+    title: "Orders are up 50%. You are working 70 hours a week. But delivery time went from 3 days to 12 days.",
+    body: "Customers are complaining. You are exhausted. But saying no to orders feels like leaving money on the table.",
+    options: [
+      "Keep taking orders",
+      "Check your capacity utilization and delivery time trend",
+      "Raise your prices",
+      "Check your marketing spend"
+    ],
+    correct: 1,
+    correctText: "Right. You cannot scale past your physical limit. Start by checking capacity utilization (hours worked ÷ hours available). If you are at 95% and delivery time is exploding, you are already broken. Stop taking orders or raise prices before you hire.",
+    wrongText: "Taking more orders when you are already at 70 hours and 12-day delivery just makes it worse. Raising prices might help, but you need to know your capacity first. Marketing spend is less directly connected — start by investigating output, not input.",
+    pattern: "Trend Tracker"
+  },
+  {
+    id: "O2", tag: "Operations", tagClass: "mg-tag-operations",
+    title: "You finished 100 orders this month. But 18 had to be redone. You did not charge extra.",
+    body: "You feel proud of the 100. But you actually did 118 units of work and got paid for 100.",
+    options: [
+      "Work faster",
+      "Check your error/rework rate and cost per unit delivered",
+      "Hire more staff",
+      "Check your customer satisfaction score"
+    ],
+    correct: 1,
+    correctText: "Right. Rework is invisible cost. Start by checking error rate (reworked items ÷ total delivered). If 18% of your work is free, you are working one day a week for nothing.",
+    wrongText: "Working faster with quality problems makes them worse. Hiring more people spreads bad processes wider. Satisfaction is a lagging indicator. Start by checking error rate — find the root cause before you scale.",
+    pattern: "Ratio Builder"
+  },
+  {
+    id: "O3", tag: "Operations", tagClass: "mg-tag-operations",
+    title: "Six months ago, your average delivery time was 4 days. Now it is 9 days. Demand has not changed.",
+    body: "You are not getting more orders. But each order is taking longer. You feel busier than ever.",
+    options: [
+      "Hire help",
+      "Check your process steps to find the new bottleneck",
+      "Raise your prices",
+      "Check your employee morale"
+    ],
+    correct: 1,
+    correctText: "Right. When demand is steady but delivery time rises, something inside or around the process may have changed. Break delivery into steps and compare how long each step takes. The slowest changed step is the best place to investigate first.",
+    wrongText: "Hiring, pricing, or morale may matter, but none is established by the information given. First compare delivery time by process step to locate where the additional delay appears.",
+    pattern: "Trend Tracker"
+  },
+  {
+    id: "CS1", tag: "Customer Success", tagClass: "mg-tag-customer-success",
+    title: "Your revenue is flat. You are acquiring 50 new customers a month. But your total customer count never grows.",
+    body: "New customers come in the front door. Old customers leave through the back. You do not notice because the revenue looks stable.",
+    options: [
+      "Spend more on marketing",
+      "Check your customer retention rate and churn rate",
+      "Lower your prices",
+      "Check your website conversion rate"
+    ],
+    correct: 1,
+    correctText: "Exactly. Flat revenue with new customer growth means you are running to stand still. Start by checking churn rate (customers lost ÷ total customers). If you retain 50% and acquire 50 new, you need 50 new just to stay flat.",
+    wrongText: "That would make it worse. Spending more on marketing to outrun churn is expensive and fragile. The real question is: why are customers leaving? Start by checking churn rate and retention rate. Fix the leak before you pour more water in.",
+    pattern: "Ratio Builder"
+  },
+  {
+    id: "CS2", tag: "Customer Success", tagClass: "mg-tag-customer-success",
+    title: "Your repeat purchase rate dropped from 45% to 18% over three months. Revenue has not dropped yet.",
+    body: "Most of your revenue this month comes from old customers who bought before the drop. The warning sign is already there.",
+    options: [
+      "Wait and see",
+      "Treat the repeat rate drop as an early warning and investigate quality, competition, and service",
+      "Launch a marketing campaign to find new customers",
+      "Check your gross profit margin"
+    ],
+    correct: 1,
+    correctText: "Exactly. Repeat rate drops before revenue does. By the time revenue falls, the damage is done. Investigate now: did quality slip? Did a competitor arrive? Did you stop caring? Start by checking repeat purchase rate trend.",
+    wrongText: "Waiting is dangerous. Revenue is a lagging indicator. It reflects old customers who bought when things were good. Marketing campaigns mask the problem. Gross margin does not explain why customers stop coming back.",
+    pattern: "Trend Tracker"
+  },
+  {
+    id: "CS6", tag: "Customer Success", tagClass: "mg-tag-customer-success",
+    title: "Your subscription business has 500 active users. But 80 cancelled this month. Last month it was 20.",
+    body: "You are still growing because new signups outpace cancellations. But the leak is getting bigger.",
+    options: [
+      "Celebrate the net growth",
+      "Check your churn rate trend and investigate what changed this month",
+      "Spend more on ads to outrun the cancellations",
+      "Check your cost per lead"
+    ],
+    correct: 1,
+    correctText: "Right. Eighty cancellations is four times last month's count, but compare churn rates using the number of active customers at the start of each month. Then investigate what changed in the product, price, service, or customer mix.",
+    wrongText: "New signups can hide a growing retention problem. Calculate the churn rate for each month using a consistent denominator, then investigate why cancellations increased.",
+    pattern: "Trend Tracker"
+  }
+];
+
+let currentIndex = 0;
+let answered = false;
+let selectedAnswers = [];
+let shuffledOrders = [];
+
+function shuffledOptionOrder(optionCount) {
+  const order = Array.from({ length: optionCount }, (_, index) => index);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  return order;
+}
+
+function show(id) {
+  document.getElementById('landing').classList.add('mg-hidden');
+  document.getElementById('scenario').classList.add('mg-hidden');
+  document.getElementById('finish').classList.add('mg-hidden');
+  document.getElementById(id).classList.remove('mg-hidden');
+}
+
+function startPractice() {
+  currentIndex = 0;
+  answered = false;
+  selectedAnswers = Array(scenarios.length).fill(null);
+  shuffledOrders = scenarios.map(s => shuffledOptionOrder(s.options.length));
+  renderScenario();
+  show('scenario');
+}
+
+function renderScenario() {
+  const s = scenarios[currentIndex];
+  answered = false;
+
+  document.getElementById('current-num').textContent = currentIndex + 1;
+  document.getElementById('total-num').textContent = scenarios.length;
+  document.getElementById('progress-fill').style.width = ((currentIndex / scenarios.length) * 100) + '%';
+
+  const tagEl = document.getElementById('tag');
+  tagEl.textContent = s.tag;
+  tagEl.className = 'mg-tag ' + s.tagClass;
+
+  document.getElementById('scenario-title').textContent = s.title;
+  document.getElementById('scenario-body').textContent = s.body;
+
+  const optsContainer = document.getElementById('options');
+  optsContainer.innerHTML = '';
+
+  shuffledOrders[currentIndex].forEach((originalIndex, displayIndex) => {
+    const opt = s.options[originalIndex];
+    const btn = document.createElement('button');
+    btn.className = 'mg-option';
+    btn.dataset.originalIndex = originalIndex;
+    btn.innerHTML = `<span class="mg-option-letter">${String.fromCharCode(65 + displayIndex)}</span><span class="mg-option-text">${opt}</span>`;
+    btn.onclick = () => selectOption(originalIndex);
+    optsContainer.appendChild(btn);
+  });
+
+  const feedback = document.getElementById('feedback');
+  feedback.className = 'mg-feedback mg-hidden';
+  feedback.innerHTML = '';
+  const nextButton = document.getElementById('next-btn');
+  nextButton.classList.remove('mg-hidden');
+  nextButton.textContent = currentIndex === scenarios.length - 1 ? 'Finish' : 'Next Situation';
+  nextButton.disabled = selectedAnswers[currentIndex] === null;
+
+  if (selectedAnswers[currentIndex] !== null) {
+    showAnswer(selectedAnswers[currentIndex]);
+  }
+
+}
+
+function selectOption(index) {
+  if (answered) return;
+  selectedAnswers[currentIndex] = index;
+  showAnswer(index);
+}
+
+function showAnswer(index) {
+  answered = true;
+
+  const s = scenarios[currentIndex];
+  const opts = document.querySelectorAll('.mg-option');
+
+  opts.forEach(btn => {
+    const originalIndex = Number(btn.dataset.originalIndex);
+    btn.classList.add('disabled');
+    if (originalIndex === s.correct) {
+      btn.classList.add('correct');
+    } else if (originalIndex === index) {
+      btn.classList.add('wrong');
+    }
+  });
+
+  const fb = document.getElementById('feedback');
+  const isCorrect = index === s.correct;
+  fb.className = 'mg-feedback ' + (isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? s.correctText : s.wrongText) +
+    `<div class="mg-pattern"><span class="mg-pattern-dot"></span>Thinking pattern: ${s.pattern}</div>`;
+  fb.classList.remove('mg-hidden');
+
+  document.getElementById('next-btn').classList.remove('mg-hidden');
+  document.getElementById('next-btn').textContent = currentIndex === scenarios.length - 1 ? 'Finish' : 'Next Situation';
+  document.getElementById('next-btn').disabled = false;
+}
+
+function nextScenario() {
+  if (!answered) return;
+  currentIndex++;
+  if (currentIndex >= scenarios.length) {
+    show('finish');
+  } else {
+    renderScenario();
+  }
+}
+
+function previousScenario() {
+  if (currentIndex === 0) {
+    show('landing');
+  } else {
+    currentIndex--;
+    renderScenario();
+  }
+}
+
+function restartPractice() {
+  startPractice();
+}
+
+</script>
+
+</body>
+</html>
